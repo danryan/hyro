@@ -6,6 +6,7 @@ module Hyro
   
   class Error < StandardError; end
   class Misconfigured < Error; end
+  class UnknownAttribute < Error; end
   
 end
 
@@ -15,4 +16,6 @@ require 'active_model'
 
 require "hyro/version"
 require 'hyro/configuration'
+require 'hyro/finders'
+require 'hyro/persistence'
 require 'hyro/base'
