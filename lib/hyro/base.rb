@@ -2,16 +2,19 @@ module Hyro
   class Base
     extend Hyro::Finders
     include Hyro::Persistence
+    include Hyro::Actions
     include ActiveModel::AttributeMethods
     include ActiveModel::Dirty
     
     def initialize(attrs)
+      @previous_attributes = {}
       load_attributes(attrs)
     end
     
     def load_attributes(attrs)
       attrs.each do |k,v|
-        send("#{k}=", v)
+        raise(Hyro::UnknownAttribute, "'#{k}' is not a known attribute") unless respond_to?("#{k}=")
+        attributes[k.to_s] = v
       end
     end
     
@@ -62,8 +65,7 @@ module Hyro
         end
         
         define_method("#{attr}=") do |val|
-          send("#{attr}_will_change!") if 
-            @previous_attributes && val != @previous_attributes[attr]
+          send("#{attr}_will_change!") if val != @previous_attributes[attr]
           attributes[attr.to_s] = val
         end
       end

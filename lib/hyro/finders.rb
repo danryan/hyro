@@ -10,8 +10,8 @@ module Hyro
     end
     
     def find_by_id(*args)
-      options = Hash===args[1] ? args[1] : {}
-      resp = connection.get( "#{configuration.base_path}/#{args[0]}", options )
+      params = Hash===args[1] ? args[1] : {}
+      resp = connection.get( "#{configuration.base_path}/#{args[0]}", params )
       inst = new(resp.body[configuration.root_name])
       inst.instance_variable_set(:@is_persisted, true)
       inst

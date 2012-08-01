@@ -12,10 +12,12 @@ end
 
 require 'faraday'
 require 'faraday_middleware'
+require 'json'
 require 'active_model'
 
 require "hyro/version"
 require 'hyro/configuration'
 require 'hyro/finders'
 require 'hyro/persistence'
+require 'hyro/actions'
 require 'hyro/base'

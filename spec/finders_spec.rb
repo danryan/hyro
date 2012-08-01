@@ -22,12 +22,12 @@ describe Hyro::Finders do
     it "should return found instance" do
       stub_request(:get, "http://localtest.host/widgets/1").
         with(:headers => {'Accept'=>'application/json'}).
-        to_return(:status => 200, :body => {
+        to_return(:status => 200, :body => JSON.pretty_generate({
           "widget" => {
             "id" => 1,
             "name" => "Test Widget"
           }
-        }.to_json, :headers => {'Content-Type'=>'application/json'})
+        }), :headers => {'Content-Type'=>'application/json'})
       
       test = TestSubclass.find(1)
       test.should be_kind_of(TestSubclass)
@@ -38,12 +38,12 @@ describe Hyro::Finders do
     it "should given params return found instance" do
       stub_request(:get, "http://localtest.host/widgets/1?mars=true&maj=really+true").
         with(:headers => {'Accept'=>'application/json'}).
-        to_return(:status => 200, :body => {
+        to_return(:status => 200, :body => JSON.pretty_generate({
           "widget" => {
             "id" => 1,
             "name" => "Test Widget"
           }
-        }.to_json, :headers => {'Content-Type'=>'application/json'})
+        }), :headers => {'Content-Type'=>'application/json'})
       
       test = TestSubclass.find(1, { mars: true, maj: 'really true'})
       test.should be_kind_of(TestSubclass)
