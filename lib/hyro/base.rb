@@ -29,7 +29,7 @@ module Hyro
         has_transform = Hash===configuration.transforms && configuration.transforms[k]
         encoded[k.to_s] = has_transform ? configuration.transforms[k].encode(v) : v
       end
-      encoded
+      {configuration.root_name => encoded}
     end
     
     # .new + #save

@@ -46,7 +46,7 @@ describe Hyro::Actions do
       end
       
       stub_request(:put, "http://localtest.host/widgets/100/order").
-        with(:body => "{\"id\":100,\"name\":\"Neverknown\",\"state\":\"unordered\"}",
+        with(:body => "{\"widget\":{\"id\":100,\"name\":\"Neverknown\",\"state\":\"unordered\"}}",
           :headers => {'Accept'=>'application/json', 'Content-Type'=>'application/json'}).
         to_return(:status => 200, :body => JSON.pretty_generate({
           "widget" => {

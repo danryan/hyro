@@ -23,7 +23,7 @@ describe Hyro::Persistence do
     describe "new object" do
       it "should raise when unknown attributes are returned by server" do
         stub_request(:post, "http://localtest.host/widgets").
-          with(:body => "{\"name\":\"Neverknown\"}",
+          with(:body => "{\"widget\":{\"name\":\"Neverknown\"}}",
             :headers => {'Accept'=>'application/json', 'Content-Type'=>'application/json'}).
           to_return(:status => 201, :body => JSON.pretty_generate({
             "widget" => {
@@ -39,7 +39,7 @@ describe Hyro::Persistence do
     
       it "should return object with ID" do
         stub_request(:post, "http://localtest.host/widgets").
-          with(:body => "{\"name\":\"Neverknown\"}",
+          with(:body => "{\"widget\":{\"name\":\"Neverknown\"}}",
             :headers => {'Accept'=>'application/json', 'Content-Type'=>'application/json'}).
           to_return(:status => 201, :body => JSON.pretty_generate({
             "widget" => {
@@ -72,7 +72,7 @@ describe Hyro::Persistence do
       
       it "should return updated object" do
         stub_request(:put, "http://localtest.host/widgets/100").
-          with(:body => "{\"id\":100,\"name\":\"Wasknown\",\"updated_at\":\"2012-01-25T10:20:33Z\"}",
+          with(:body => "{\"widget\":{\"id\":100,\"name\":\"Wasknown\",\"updated_at\":\"2012-01-25T10:20:33Z\"}}",
             :headers => {'Accept'=>'application/json', 'Content-Type'=>'application/json'}).
           to_return(:status => 200, :body => JSON.pretty_generate({
             "widget" => {
@@ -98,7 +98,7 @@ describe Hyro::Persistence do
         now_s = now.strftime("%Y-%m-%dT%H:%M:%SZ")
         
         stub_request(:put, "http://localtest.host/widgets/100").
-          with(:body => "{\"id\":100,\"name\":\"Neverknown\",\"updated_at\":\"#{now_s}\"}",
+          with(:body => "{\"widget\":{\"id\":100,\"name\":\"Neverknown\",\"updated_at\":\"#{now_s}\"}}",
             :headers => {'Accept'=>'application/json', 'Content-Type'=>'application/json'}).
           to_return(:status => 200, :body => JSON.pretty_generate({
             "widget" => {
