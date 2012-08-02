@@ -4,12 +4,14 @@ describe Hyro::Persistence do
       model_attribute :id, :name, :updated_at
     end
     MAJSubclass.instance_variable_set(:@configuration, nil)
+    MAJSubclass.instance_variable_set(:@connection, nil)
     MAJSubclass.configure do |conf|
       conf.root_name = "widget"
       conf.root_name_plural = "widgets"
       conf.base_url = "http://localtest.host"
       conf.base_path = "/widgets"
-      conf.authorization = "Bearer SEKRET"
+      conf.auth_type = "Bearer"
+      conf.auth_token = "SEKRET"
       conf.transforms = {
         "updated_at" => Hyro::Transform::Time
       }

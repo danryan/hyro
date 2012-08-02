@@ -32,6 +32,16 @@ module Hyro
       encoded
     end
     
+    # .new + #save
+    def self.create(*args)
+      new(*args).save
+    end
+    
+    # .new + #save!
+    def self.create!(*args)
+      new(*args).save!
+    end
+    
     def self.configure(&block)
       yield configuration
     end
@@ -59,10 +69,20 @@ module Hyro
       Faraday.new(configuration.base_url) do |conn|
         conn.headers["Accept"] = "application/json"
         conn.request :json
+        conn.request :authorize, :type => configuration.auth_type, :token => configuration.auth_token
         conn.response :raise_errors
         conn.response :json, :content_type => /\bjson\Z/
         conn.adapter Faraday.default_adapter
       end
+    end
+    
+    def self.assert_valid_response!(resp)
+      raise(Hyro::EmptyResponse, "No body received from remote server") unless resp.body
+      raise(Hyro::UnexpectedContentType, "Response did not provide an acceptable 'Content-Type' header") unless Hash===resp.body
+    end
+    
+    def assert_valid_response!(*args)
+      self.class.assert_valid_response!(*args)
     end
     
     # Pass one or more names to define the remote objects properties.

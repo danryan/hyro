@@ -4,6 +4,7 @@ describe Hyro::Base do
       model_attribute :id, :name
     end
     TestSubclass.instance_variable_set(:@configuration, nil)
+    TestSubclass.instance_variable_set(:@connection, nil)
     TestSubclass
   end
   
@@ -13,19 +14,22 @@ describe Hyro::Base do
       root_name_plural = "widgets"
       base_url = "http://localtest.host"
       base_path = "/widgets"
-      authorization = "Bearer SEKRET"
+      auth_type = "Bearer"
+      auth_token = "SEKRET"
       klass.configure do |conf|
         conf.root_name = root_name
         conf.root_name_plural = root_name_plural
         conf.base_url = base_url
         conf.base_path = base_path
-        conf.authorization = authorization
+        conf.auth_type = auth_type
+        conf.auth_token = auth_token
       end
       klass.configuration.root_name.should == root_name
       klass.configuration.root_name_plural.should == root_name_plural
       klass.configuration.base_url.should == base_url
       klass.configuration.base_path.should == base_path
-      klass.configuration.authorization.should == authorization
+      klass.configuration.auth_type.should == auth_type
+      klass.configuration.auth_token.should == auth_token
     end
   end
   
@@ -40,7 +44,8 @@ describe Hyro::Base do
         conf.root_name_plural = "widgets"
         conf.base_url = "http://localtest.host"
         conf.base_path = "/widgets"
-        conf.authorization = "Bearer SEKRET"
+        conf.auth_type = "Bearer"
+        conf.auth_token = "SEKRET"
       end
       conn = klass.new_connection
       conn.should be_kind_of(Faraday::Connection)
@@ -54,7 +59,8 @@ describe Hyro::Base do
         conf.root_name_plural = "widgets"
         conf.base_url = "http://localtest.host"
         conf.base_path = "/widgets"
-        conf.authorization = "Bearer SEKRET"
+        conf.auth_type = "Bearer"
+        conf.auth_token = "SEKRET"
       end
     end
     

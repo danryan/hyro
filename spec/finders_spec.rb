@@ -4,12 +4,14 @@ describe Hyro::Finders do
       model_attribute :id, :name
     end
     TestSubclass.instance_variable_set(:@configuration, nil)
+    TestSubclass.instance_variable_set(:@connection, nil)
     TestSubclass.configure do |conf|
       conf.root_name = "widget"
       conf.root_name_plural = "widgets"
       conf.base_url = "http://localtest.host"
       conf.base_path = "/widgets"
-      conf.authorization = "Bearer SEKRET"
+      conf.auth_type = "Bearer"
+      conf.auth_token = "SEKRET"
     end
     TestSubclass
   end

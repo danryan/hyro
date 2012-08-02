@@ -7,10 +7,14 @@ module Hyro
   class Error < StandardError; end
   class Misconfigured < Error; end
   class UnknownAttribute < Error; end
+  class EmptyResponse < Error; end
+  class UnexpectedContentType < Error; end
   class HttpError < Error; end
   class Redirected < HttpError; end
   class RequestError < HttpError; end
   class ResourceNotFound < RequestError; end
+  class NotAuthorized < RequestError; end
+  class PermissionDenied < RequestError; end
   class ClientError < HttpError; end
   class ServerError < HttpError; end
   
@@ -24,6 +28,7 @@ require 'active_model'
 require "hyro/version"
 require 'hyro/transform/time'
 require 'hyro/configuration'
+require 'hyro/auth'
 require 'hyro/errors'
 require 'hyro/finders'
 require 'hyro/persistence'

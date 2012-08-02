@@ -19,6 +19,7 @@ module Hyro
         connection.post( "#{configuration.base_path}", encoded_attributes )
       end
       
+      assert_valid_response!(resp)
       load_attributes(resp.body[configuration.root_name])
       
       @is_persisted = true

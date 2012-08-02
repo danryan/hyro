@@ -5,6 +5,10 @@ module Hyro
       case res.status
       when (200...300)
         res
+      when (401)
+        raise Hyro::NotAuthorized.new(res)
+      when (403)
+        raise Hyro::PermissionDenied.new(res)
       when (404)
         raise Hyro::ResourceNotFound.new(res)
       when (300...400)
