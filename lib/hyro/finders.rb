@@ -2,6 +2,11 @@ module Hyro
   module Finders
     
     def find(*args)
+      find!(*args)
+    rescue Hyro::ResourceNotFound
+    end
+    
+    def find!(*args)
       if String===args[0] or Integer===args[0]
         find_by_id(*args)
       else
