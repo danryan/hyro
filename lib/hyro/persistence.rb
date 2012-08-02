@@ -14,9 +14,9 @@ module Hyro
     
     def save!
       resp = if persisted?
-        connection.put( "#{configuration.base_path}/#{id}", attributes )
+        connection.put( "#{configuration.base_path}/#{id}", encoded_attributes )
       else
-        connection.post( "#{configuration.base_path}", attributes )
+        connection.post( "#{configuration.base_path}", encoded_attributes )
       end
       
       load_attributes(resp.body[configuration.root_name])

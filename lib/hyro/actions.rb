@@ -2,7 +2,8 @@ module Hyro
   # Non-REST HTTP methods, i.e. /order, /copy, etc.
   module Actions
     
-    # Member actions
+    # Member actions.
+    #
     def action(name, params=nil)
       raise(Hyro::Misconfigured, "actions configuration is required, instead "+
         "got #{configuration.actions.inspect}") unless 
@@ -13,6 +14,9 @@ module Hyro
       
       http_method = configuration.actions['member'][name]
       params = Hash===params ? params : {}
+      
+      # Send current attributes too, when saving.
+      params = (http_method=='put' || http_method=='post' ? params.merge(encoded_attributes) : params)
       
       resp = connection.send(http_method, "#{configuration.base_path}/#{id}/#{name}", params)
       load_attributes(resp.body[configuration.root_name])

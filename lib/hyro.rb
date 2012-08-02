@@ -22,6 +22,7 @@ require 'json'
 require 'active_model'
 
 require "hyro/version"
+require 'hyro/transform/time'
 require 'hyro/configuration'
 require 'hyro/errors'
 require 'hyro/finders'

@@ -14,12 +14,22 @@ module Hyro
     def load_attributes(attrs)
       attrs.each do |k,v|
         raise(Hyro::UnknownAttribute, "'#{k}' is not a known attribute") unless respond_to?("#{k}=")
-        attributes[k.to_s] = v
+        has_transform = Hash===configuration.transforms && configuration.transforms[k]
+        attributes[k.to_s] = has_transform ? configuration.transforms[k].decode(v) : v
       end
     end
     
     def attributes
       @attributes ||= {}
+    end
+    
+    def encoded_attributes
+      encoded = {}
+      attributes.each do |k,v|
+        has_transform = Hash===configuration.transforms && configuration.transforms[k]
+        encoded[k.to_s] = has_transform ? configuration.transforms[k].encode(v) : v
+      end
+      encoded
     end
     
     def self.configure(&block)
