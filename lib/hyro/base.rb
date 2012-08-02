@@ -5,13 +5,25 @@ module Hyro
     include Hyro::Actions
     include ActiveModel::AttributeMethods
     include ActiveModel::Dirty
+    extend ActiveModel::Naming
+    
+    attr_reader :errors
     
     def initialize(attrs)
+      @errors = ActiveModel::Errors.new(self)
       @previous_attributes = {}
       load_attributes(attrs)
     end
     
     def load_attributes(attrs)
+      if (errs = attrs.delete('errors'))
+        errs.each do |e_attr, e_descs|
+          e_descs.each do |e_desc|
+            errors.add(e_attr, e_desc)
+          end
+        end
+        return # keep the local state intact when validation errors are received
+      end
       attrs.each do |k,v|
         raise(Hyro::UnknownAttribute, "'#{k}' is not a known attribute") unless respond_to?("#{k}=")
         has_transform = Hash===configuration.transforms && configuration.transforms[k]

@@ -25,7 +25,12 @@ module Hyro
       @is_persisted = true
       @previously_changed = changes
       @changed_attributes.clear
+      errors.clear
+      self
       
+    rescue Hyro::ValidationFailed => e
+      assert_valid_response!(e.response)
+      load_attributes(e.response.body[configuration.root_name])
       self
     end
     

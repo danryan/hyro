@@ -36,6 +36,10 @@ describe Hyro::Errors do
     test_for_error(403, Hyro::PermissionDenied)
   end
   
+  it "raises validation failed" do  
+    test_for_error(422, Hyro::ValidationFailed)
+  end
+  
   it "raises redirected" do  
     test_for_error(302, Hyro::Redirected)
   end

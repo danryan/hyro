@@ -19,8 +19,14 @@ module Hyro
       params = (http_method=='put' || http_method=='post' ? params.merge(encoded_attributes) : params)
       
       resp = connection.send(http_method, "#{configuration.base_path}/#{id}/#{name}", params)
+      assert_valid_response!(resp)
       load_attributes(resp.body[configuration.root_name])
+      errors.clear
+      self
       
+    rescue Hyro::ValidationFailed => e
+      assert_valid_response!(e.response)
+      load_attributes(e.response.body[configuration.root_name])
       self
     end
     

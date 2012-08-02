@@ -11,6 +11,8 @@ module Hyro
         raise Hyro::PermissionDenied.new(res)
       when (404)
         raise Hyro::ResourceNotFound.new(res)
+      when (422)
+        raise Hyro::ValidationFailed.new(res)
       when (300...400)
         raise Hyro::Redirected.new(res)
       when (400...500)

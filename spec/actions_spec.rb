@@ -60,5 +60,33 @@ describe Hyro::Actions do
       instance.state.should == "ordered"
       
     end
+    
+    it "should return validation errors" do
+      TestSubclass.configure do |conf|
+        conf.actions = {
+          "member" => {
+            "order" => "put"
+          }
+        }
+      end
+      
+      stub_request(:put, "http://localtest.host/widgets/100/order").
+        with(:body => "{\"widget\":{\"id\":100,\"name\":\"Neverknown\",\"state\":\"unordered\"}}",
+          :headers => {'Accept'=>'application/json', 'Content-Type'=>'application/json'}).
+        to_return(:status => 422, :body => JSON.pretty_generate({
+          "widget" => {
+            "id" => 100,
+            "name" => "Neverknown",
+            "state" => "unordered",
+            "errors" => {"state" => ["out of funds"]}
+          }
+        }), :headers => {'Content-Type'=>'application/json'})
+      
+      instance.action("order")
+      instance.state.should == "unordered"
+      instance.errors.empty?.should == false
+      instance.errors['state'].size.should == 1
+      instance.errors['state'].first.should == "out of funds"
+    end
   end
 end

@@ -9,12 +9,19 @@ module Hyro
   class UnknownAttribute < Error; end
   class EmptyResponse < Error; end
   class UnexpectedContentType < Error; end
-  class HttpError < Error; end
+  class HttpError < Error
+    attr_accessor :response
+    def initialize(resp, *args)
+      @response = resp
+      super(*args)
+    end
+  end
   class Redirected < HttpError; end
   class RequestError < HttpError; end
   class ResourceNotFound < RequestError; end
   class NotAuthorized < RequestError; end
   class PermissionDenied < RequestError; end
+  class ValidationFailed < RequestError; end
   class ClientError < HttpError; end
   class ServerError < HttpError; end
   

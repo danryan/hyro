@@ -53,6 +53,25 @@ describe Hyro::Persistence do
         test.persisted?.should == true
         test.id.should == 1
       end
+    
+      it "should return validation errors" do
+        stub_request(:post, "http://localtest.host/widgets").
+          with(:body => "{\"widget\":{\"name\":\"\"}}",
+            :headers => {'Accept'=>'application/json', 'Content-Type'=>'application/json'}).
+          to_return(:status => 422, :body => JSON.pretty_generate({
+            "widget" => {
+              "name" => "This value should not be loaded",
+              "errors" => {"name" => ["can't be blank", "can't be Mars (haha)"]}
+            }
+          }), :headers => {'Content-Type'=>'application/json'})
+      
+        test = MAJSubclass.new( :name => "")
+        test.save!
+        test.persisted?.should == false
+        test.errors.empty?.should == false
+        test.errors['name'].size.should == 2
+        test.errors['name'].first.should == "can't be blank"
+      end
     end
     
     describe "existing object" do
