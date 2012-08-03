@@ -15,7 +15,17 @@ module Hyro
       load_attributes(attrs)
     end
     
+    def to_param
+      raise(Hyro::Misconfigured, "An 'id' attribute is required.") unless respond_to?(:id)
+      id.to_s
+    end
+    
+    def to_s
+      "<#{self.class} #{attributes.map {|k,v| "#{k}=#{v.inspect}"}*' ' }>"
+    end
+    
     def load_attributes(attrs)
+      return if attrs.nil?
       if (errs = attrs.delete('errors'))
         errs.each do |e_attr, e_descs|
           e_descs.each do |e_desc|
