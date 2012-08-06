@@ -79,6 +79,6 @@ Find a thing:
 
 Call a custom action:
 
-    thing.action(:make_better)
+    thing.action("make_better")
 
     
