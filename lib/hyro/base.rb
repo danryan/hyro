@@ -89,6 +89,7 @@ module Hyro
       raise(Misconfigured, "A root_name is required") unless configuration.root_name
       raise(Misconfigured, "A root_name_plural is required") unless configuration.root_name_plural
       Faraday.new(configuration.base_url) do |conn|
+        conn.use :instrumentation
         conn.headers["Accept"] = "application/json"
         conn.request :json
         conn.request :authorize, :type => configuration.auth_type, :token => configuration.auth_token
