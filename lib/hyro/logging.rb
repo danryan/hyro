@@ -9,9 +9,10 @@ module Hyro
       
       ActiveSupport::Notifications.subscribe('request.faraday') do |name, start_time, end_time, _, env|
         url = env[:url]
+        status = env[:response].status
         http_method = env[:method].to_s.upcase
         duration = ((end_time - start_time) * 1000)
-        Rails.logger.info 'Hyro %s %s (%.1fms)' % [http_method, url.to_s, duration]
+        Rails.logger.info 'Hyro %s %s %d (%.1fms)' % [http_method, url.to_s, status, duration]
       end
     end
     
