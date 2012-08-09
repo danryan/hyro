@@ -44,7 +44,8 @@ describe Hyro::Persistence do
           to_return(:status => 201, :body => JSON.pretty_generate({
             "widget" => {
               "id" => 1,
-              "name" => "Neverknown"
+              "name" => "Neverknown",
+              "errors" => {}
             }
           }), :headers => {'Content-Type'=>'application/json'})
       

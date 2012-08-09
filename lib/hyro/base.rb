@@ -27,7 +27,7 @@ module Hyro
     
     def load_attributes(attrs)
       return if attrs.nil?
-      if (errs = attrs.delete('errors'))
+      if (errs = attrs.delete('errors')) && !errs.empty?
         errs.each do |e_attr, e_descs|
           e_descs.each do |e_desc|
             errors.add(e_attr, e_desc)
