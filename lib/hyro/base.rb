@@ -6,6 +6,7 @@ module Hyro
     include ActiveModel::AttributeMethods
     include ActiveModel::Dirty
     extend ActiveModel::Naming
+    extend ActiveModel::Translation
     
     attr_reader :errors
     
