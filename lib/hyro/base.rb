@@ -10,7 +10,7 @@ module Hyro
     
     attr_reader :errors
     
-    def initialize(attrs)
+    def initialize(attrs=nil)
       @errors = ActiveModel::Errors.new(self)
       @previous_attributes = {}
       load_attributes(attrs)
