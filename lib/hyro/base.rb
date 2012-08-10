@@ -25,8 +25,8 @@ module Hyro
       "<#{self.class} #{attributes.map {|k,v| "#{k}=#{v.inspect}"}*' ' }>"
     end
     
-    def load_attributes(attrs)
-      return if attrs.nil?
+    def load_attributes(attrs=nil)
+      return unless attrs
       if (errs = attrs.delete('errors')) && !errs.empty?
         errs.each do |e_attr, e_descs|
           e_descs.each do |e_desc|
