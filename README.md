@@ -41,7 +41,7 @@ Or install it yourself as:
         conf.base_url = "https://awesome-app.com"
         conf.base_path = "/v1/things"
         
-        # HTTP "Authorization" header (required)
+        # HTTP "Authorization" header
         conf.auth_type = "Bearer"
         conf.auth_token = "S3KR3T"
         

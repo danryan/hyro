@@ -33,7 +33,17 @@ describe Hyro::Auth do
     request.should have_been_made
   end
   
-  it "fails when missing config" do
-    lambda { klass.find!(1) }.should raise_error(Hyro::Misconfigured)
+  it "noop without config" do
+    request = stub_request(:get, "http://localtest.host/widgets/1").
+      with(:headers => {'Accept'=>'application/json'}). # <- stub has no auth header
+      to_return(:status => 200, :body => JSON.pretty_generate({
+        "widget" => {
+          "id" => 1,
+          "name" => "Test Widget"
+        }
+      }), :headers => {'Content-Type'=>'application/json'})
+    
+    klass.find!(1)
+    request.should have_been_made
   end
 end

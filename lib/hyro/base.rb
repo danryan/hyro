@@ -93,7 +93,9 @@ module Hyro
         conn.use :instrumentation
         conn.headers["Accept"] = "application/json"
         conn.request :json
-        conn.request :authorize, :type => configuration.auth_type, :token => configuration.auth_token
+        if configuration.auth_type && configuration.auth_token
+          conn.request :authorize, :type => configuration.auth_type, :token => configuration.auth_token
+        end
         conn.response :raise_errors
         conn.response :json, :content_type => /\bjson\Z/
         conn.adapter Faraday.default_adapter
