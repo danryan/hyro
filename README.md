@@ -5,7 +5,7 @@
 We're actively building this library to replace ActiveResource in our Rails 3 applications. A full RSpec2 test suite is keeping it sane.
 
   * ActiveModel provides behaviors like Validations, Dirty-tracking, Naming & much more: https://github.com/rails/rails/tree/3-2-stable/activemodel
-  * Faraday provides a middleware/stack-oriented HTTP connectivity: https://github.com/technoweenie/faraday
+  * Faraday provides middleware/stack-oriented HTTP connectivity: https://github.com/technoweenie/faraday
   * Hyro itself provides the structure to configure & interact with the objects representing remote resources.
 
 ### What it does do
