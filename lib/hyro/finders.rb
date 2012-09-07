@@ -17,10 +17,7 @@ module Hyro
     def find_by_id(*args)
       params = Hash===args[1] ? args[1] : {}
       resp = connection.get( "#{configuration.base_path}/#{args[0]}", params )
-      assert_valid_response!(resp)
-      inst = new(resp.body[configuration.root_name])
-      inst.instance_variable_set(:@is_persisted, true)
-      inst
+      existing_from_remote(resp.body)
     end
     
   end

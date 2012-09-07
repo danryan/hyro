@@ -25,6 +25,10 @@ module Hyro
       "<#{self.class} #{attributes.map {|k,v| "#{k}=#{v.inspect}"}*' ' }>"
     end
     
+    # Populate this instance with the given attribute values & errors.
+    #
+    # Does not perform transformations. Instead use `*_from_remote` methods when loading data from the remote service.
+    #
     def load_attributes(attrs=nil)
       return unless attrs
       if (errs = attrs.delete('errors')) && !errs.empty?
@@ -37,22 +41,92 @@ module Hyro
       end
       attrs.each do |k,v|
         raise(Hyro::UnknownAttribute, "'#{k}' is not a known attribute") unless respond_to?("#{k}=")
-        has_transform = Hash===configuration.transforms && configuration.transforms[k]
-        attributes[k.to_s] = has_transform ? configuration.transforms[k].decode(v) : v
+        attributes[k.to_s] = v
       end
     end
     
+    # Instantiate an existing remote object, such as the result of a find, with the given attributes.
+    #
+    # Performs sanity checks & transformations.
+    #
+    def self.existing_from_remote(attrs=nil)
+      inst = new
+      inst.load_attributes(attributes_from_remote(attrs))
+      inst.instance_variable_set(:@is_persisted, true)
+      inst
+    end
+    
+    # Populate the instance with attributes returned from the remote service.
+    #
+    # Performs sanity checks & transformations.
+    #
+    def load_attributes_from_remote(attrs=nil)
+      load_attributes(attributes_from_remote(attrs))
+    end
+    
+    # Hash of the instance's attributes. DO NOT ACCESS THESE DIRECTLY.
+    #
+    # Instead, use the getter & setter methods defined by Hyro::Base.model_attribute.
+    #
     def attributes
       @attributes ||= {}
     end
     
+    # Hash of the instance's attributes, encoded by any `configuration.transforms`.
+    #
     def encoded_attributes
       encoded = {}
       attributes.each do |k,v|
         has_transform = Hash===configuration.transforms && configuration.transforms[k]
         encoded[k.to_s] = has_transform ? configuration.transforms[k].encode(v) : v
       end
-      {configuration.root_name => encoded}
+      encoded
+    end
+    
+    # Returns a hash of encoded attributes formatted with the optional/configured root element.
+    #
+    # Options include:
+    #   * :include_root for a single root-element using the configured root name
+    #
+    def attributes_to_remote(options=nil)
+      options = {} unless Hash===options
+      if options[:include_root] || configuration.include_root
+        {configuration.root_name => encoded_attributes}
+      else
+        encoded_attributes
+      end
+    end
+    
+    # Hash of attributes, decoded by any `configuration.transforms`.
+    #
+    def self.decoded_attributes(attrs)
+      decoded = {}
+      attrs.each do |k,v|
+        has_transform = Hash===configuration.transforms && configuration.transforms[k]
+        decoded[k.to_s] = has_transform ? configuration.transforms[k].decode(v) : v
+      end
+      decoded
+    end
+    
+    # Returns a hash of decoded attributes accessed with the optional/configured root element.
+    #
+    # Options include:
+    #   * :include_root for a single root-element using the configured root name
+    #
+    def self.attributes_from_remote(attrs, options=nil)
+      assert_valid_response!(attrs)
+      options = {} unless Hash===options
+      if options[:include_root] || configuration.include_root
+        decoded_attributes(attrs[configuration.root_name])
+      else
+        decoded_attributes(attrs)
+      end
+    end
+    
+    # See equivalent class method Hyro::Base.attributes_from_remote
+    #
+    def attributes_from_remote(*args)
+      self.class.attributes_from_remote(*args)
     end
     
     # .new + #save
@@ -65,8 +139,18 @@ module Hyro
       new(*args).save!
     end
     
+    # Call with a block accepting the configuration, to set-up the class.
+    #
+    #     class Thing < Hyro::Base
+    #       configure do |conf|
+    #         conf.root_name = "thing"
+    #       end
+    #     end
+    #
     def self.configure(&block)
-      yield configuration
+      r = yield(configuration)
+      configuration.include_root = true if configuration.include_root.nil? 
+      r
     end
     
     def self.configuration
@@ -77,10 +161,14 @@ module Hyro
       self.class.configuration
     end
     
+    # The underlying Faraday transport.
+    #
     def self.connection
       @connection ||= new_connection
     end
     
+    # The underlying Faraday transport; one per class.
+    #
     def connection
       self.class.connection
     end
@@ -102,9 +190,13 @@ module Hyro
       end
     end
     
-    def self.assert_valid_response!(resp)
-      raise(Hyro::EmptyResponse, "No body received from remote server") unless resp.body
-      raise(Hyro::UnexpectedContentType, "Response did not provide an acceptable 'Content-Type' header") unless Hash===resp.body
+    def self.assert_valid_response!(response_body)
+      raise(Hyro::EmptyResponse, "No body received from remote server") unless 
+        response_body
+      
+      # When the Content-Type is recognized by Faraday, the body is coerced into a Hash.
+      raise(Hyro::UnexpectedContentType, "Response did not provide an acceptable 'Content-Type' header") unless 
+        Hash===response_body
     end
     
     def assert_valid_response!(*args)
@@ -112,6 +204,11 @@ module Hyro
     end
     
     # Pass one or more names to define the remote objects properties.
+    #
+    #     class Thing < Hyro::Base
+    #       model_attribute :id, :name, :created_at, :updated_at
+    #     end
+    #
     def self.model_attribute(*attrs)
       define_attribute_methods attrs
       

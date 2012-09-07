@@ -16,17 +16,15 @@ module Hyro
       params = Hash===params ? params : {}
       
       # Send current attributes too, when saving.
-      params = (http_method=='put' || http_method=='post' ? params.merge(encoded_attributes) : params)
+      params = (http_method=='put' || http_method=='post' ? params.merge(attributes_to_remote) : params)
       
       resp = connection.send(http_method, "#{configuration.base_path}/#{id}/#{name}", params)
-      assert_valid_response!(resp)
-      load_attributes(resp.body[configuration.root_name])
+      load_attributes_from_remote(resp.body)
       errors.clear
       self
       
     rescue Hyro::ValidationFailed => e
-      assert_valid_response!(e.response)
-      load_attributes(e.response.body[configuration.root_name])
+      load_attributes_from_remote(e.response.body)
       self
     end
     

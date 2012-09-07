@@ -14,13 +14,12 @@ module Hyro
     
     def save!
       resp = if persisted?
-        connection.put( "#{configuration.base_path}/#{id}", encoded_attributes )
+        connection.put( "#{configuration.base_path}/#{id}", attributes_to_remote )
       else
-        connection.post( "#{configuration.base_path}", encoded_attributes )
+        connection.post( "#{configuration.base_path}", attributes_to_remote )
       end
       
-      assert_valid_response!(resp)
-      load_attributes(resp.body[configuration.root_name])
+      load_attributes_from_remote(resp.body)
       
       @is_persisted = true
       @previously_changed = changes
@@ -29,8 +28,7 @@ module Hyro
       self
       
     rescue Hyro::ValidationFailed => e
-      assert_valid_response!(e.response)
-      load_attributes(e.response.body[configuration.root_name])
+      load_attributes_from_remote(e.response.body)
       self
     end
     
