@@ -40,7 +40,7 @@ module Hyro
         return # keep the local state intact when validation errors are received
       end
       attrs.each do |k,v|
-        raise(Hyro::UnknownAttribute, "'#{k}' is not a known attribute") unless respond_to?("#{k}=")
+        next unless respond_to?("#{k}=")
         attributes[k.to_s] = v
       end
     end
