@@ -114,6 +114,7 @@ module Hyro
     #   * :include_root for a single root-element using the configured root name
     #
     def self.attributes_from_remote(attrs, options=nil)
+      return unless attrs
       assert_valid_response!(attrs)
       options = {} unless Hash===options
       if options[:include_root] || configuration.include_root
@@ -191,9 +192,6 @@ module Hyro
     end
     
     def self.assert_valid_response!(response_body)
-      raise(Hyro::EmptyResponse, "No body received from remote server") unless 
-        response_body
-      
       # When the Content-Type is recognized by Faraday, the body is coerced into a Hash.
       raise(Hyro::UnexpectedContentType, "Response did not provide an acceptable 'Content-Type' header") unless 
         Hash===response_body
