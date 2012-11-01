@@ -25,7 +25,8 @@ module Hyro
                end
 
         load_attributes_from_remote(JSON.parse(example.response.body))
-        @is_persisted = true
+
+        @is_persisted = (200..300).include? example.response.code.to_i
         @previously_changed = changes
         @changed_attributes.clear
         errors.clear
