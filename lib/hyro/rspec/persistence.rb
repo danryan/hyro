@@ -1,9 +1,10 @@
 module Hyro
   module RSpec
     module Persistence
+      def example
+        Hyro::RSpec.example
+      end
 
-      mattr_accessor :example
-      
       def persisted?
         !!@is_persisted
       end
@@ -25,8 +26,9 @@ module Hyro
                end
 
         load_attributes_from_remote(JSON.parse(example.response.body))
+        Hyro::Errors.check_status( example.response.code.to_i, example.response )
 
-        @is_persisted = (200..300).include? example.response.code.to_i
+        @is_persisted = true
         @previously_changed = changes
         @changed_attributes.clear
         errors.clear
