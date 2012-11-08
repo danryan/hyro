@@ -34,6 +34,7 @@ require 'active_model'
 
 require "hyro/version"
 require 'hyro/transform/time'
+require 'hyro/transform/json'
 require 'hyro/configuration'
 require 'hyro/logging'
 require 'hyro/auth'
