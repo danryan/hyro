@@ -2,7 +2,12 @@ module Hyro
   class Errors < ::Faraday::Response::Middleware
     def call(env)
       res = @app.call(env)
-      case res.status
+      self.class.check_status( res.status, res )
+      res
+    end
+
+    def self.check_status( status, res )
+      case status
       when (200...300)
         res
       when (401)
@@ -22,7 +27,6 @@ module Hyro
       else
         raise Hyro::ServerError.new(res)
       end
-      res
     end
   end
 end

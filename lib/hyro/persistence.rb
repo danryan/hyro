@@ -21,7 +21,7 @@ module Hyro
       
       load_attributes_from_remote(resp.body)
       
-      @is_persisted = true
+      @is_persisted = (200..300).include? resp.status.to_i
       @previously_changed = changes
       @changed_attributes.clear
       errors.clear
