@@ -18,7 +18,7 @@ module Hyro
       # Send current attributes too, when saving.
       params = (http_method=='put' || http_method=='post' ? params.merge(attributes_to_remote) : params)
       
-      resp = connection.send(http_method, "#{member_base_url}/#{name}", params)
+      resp = connection.send(http_method, action_base_url(name), params)
       load_attributes_from_remote(resp.body)
       errors.clear
       self
@@ -30,6 +30,10 @@ module Hyro
 
     def member_base_url
       "#{configuration.base_path}/#{id}"
+    end
+
+    def action_base_url(name)
+      "#{member_base_url}/#{name}"
     end
   end
 end

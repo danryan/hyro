@@ -1,6 +1,5 @@
 module Hyro
   module Persistence
-    
     def persisted?
       !!@is_persisted
     end
@@ -14,9 +13,9 @@ module Hyro
     
     def save!
       resp = if persisted?
-        connection.put( "#{configuration.base_path}/#{id}", attributes_to_remote )
+        connection.put( save_put_url, attributes_to_remote )
       else
-        connection.post( "#{configuration.base_path}", attributes_to_remote )
+        connection.post( save_post_url, attributes_to_remote )
       end
       
       load_attributes_from_remote(resp.body)
@@ -31,6 +30,13 @@ module Hyro
       load_attributes_from_remote(e.response.body)
       self
     end
-    
+
+    def save_put_url
+      "#{configuration.base_path}/#{id}"
+    end
+
+    def save_post_url
+      "#{configuration.base_path}"
+    end
   end
 end
