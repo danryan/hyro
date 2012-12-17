@@ -51,7 +51,7 @@ module Hyro
     #
     def self.existing_from_remote(attrs=nil)
       inst = new
-      inst.load_attributes(attributes_from_remote(attrs))
+      inst.load_attributes_from_remote(attrs)
       inst.instance_variable_set(:@is_persisted, true)
       inst
     end
