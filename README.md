@@ -82,6 +82,25 @@ Or install it yourself as:
       end
     end
 
+### Override methods for unique API needs
+
+    def member_base_url
+      # return a special path for a specific remote resource (probably by ID)
+    end
+
+    def save_post_url
+      # return a special path to "create" a new remote resource
+    end
+
+    def save_put_url
+      # return a special path to "update" an existing resource
+    end
+
+    def to_param
+      # Used by Rails #url_for to generate links in views & redirects.
+      # Normally returns the string version of #id.
+    end
+
 ### Use your class
 
 New & then save:
@@ -101,6 +120,18 @@ Call a custom action:
 
     thing.action("make_better")
 
-ActiveModel validations are supported, so `thing.errors` works like ActiveRecord's errors. The remote service must respond with the errors formatted as an attribute `"errors" => {"name" => ["can't be blank", "can't be Mars (haha)"]}`.
+...or call a custom action with some querystring params:
 
-    
+    thing.action("make_better", :something => 'some value')
+
+#### Validation errors
+
+ActiveModel validations are supported, so `thing.errors` works like ActiveRecord's errors. The remote service must respond with the errors formatted as an attribute:
+
+    { "thing" => {
+        "name" => "Awesometown"
+        "errors" => {"name" => ["can't be Awesometown"]}`
+      }
+    }
+
+This format is the standard serialized format from ActiveModel::Errors.
