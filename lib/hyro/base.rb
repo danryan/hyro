@@ -137,7 +137,7 @@ module Hyro
     
     # .new + #save!
     def self.create!(*args)
-      new(*args).save!
+      new(*args).tap { |r| r.save! }
     end
     
     # Call with a block accepting the configuration, to set-up the class.
