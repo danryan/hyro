@@ -17,10 +17,10 @@ We're actively building this library to replace ActiveResource in our Rails 3 ap
   * save (with validations)
   * arbitrary non-REST actions (currently member-only)
   * provides a value transformation mechanism for non-JSON data types (Time is included)
+  * support for associated/embedded objects via transforms
 
 ### What it does NOT do (yet)
 
-  * ActiveRecord-style associations; an Association transformation & proxy is needed
   * find multiple resources in one call or support arbitrary queries
   * document or test how the remote service API should work
 
@@ -135,3 +135,85 @@ ActiveModel validations are supported, so `thing.errors` works like ActiveRecord
     }
 
 This format is the standard serialized format from ActiveModel::Errors.
+
+### Embedded objects (Associations)
+
+Hyro supports serializing and deserializing embedded objects using transforms. There is nothing magical to it; just simple instantiation of objects from JSON attributes & then serializing them back to JSON.
+
+Modeling the remote embedded objects as simple ActiveModel::Serializer-implementations makes this really simple, like:
+
+    class Widget
+      include ActiveModel::Serialization
+      attr_accessor :name
+      
+      def attributes
+        {'name' => name}
+      end
+    end
+
+#### HasOne (single object)
+
+Thing's configuration should include the following transform:
+
+    configure do |conf|
+      conf.transforms = {
+        "widget" => Thing::Transform::HasOneWidget
+      }
+    end
+
+And the transform should be declared like:
+
+    module Thing
+      module Transform
+        class HasOneWidget
+          
+          # Instantiate a Widget instance.
+          #
+          def self.decode(v)
+            return nil if v.nil?
+            Widget.new(v)
+          end
+          
+          # Noop, because the instances natively serialize back to JSON.
+          #
+          def self.encode(v)
+            v
+          end
+        end
+      end
+    end
+
+
+#### HasMany (collection of objects)
+
+Thing's configuration should include the following transform:
+
+    configure do |conf|
+      conf.transforms = {
+        "widgets" => Thing::Transform::HasManyWidgets
+      }
+    end
+
+And the transform should be declared like:
+
+    module Thing
+      module Transform
+        class HasManyWidgets
+          
+          # Map elements into Widget instances.
+          #
+          def self.decode(v)
+            return nil if v.nil?
+            v.map do |widget|
+              Widget.new(widget)
+            end
+          end
+          
+          # Noop, because the instances natively serialize back to JSON.
+          #
+          def self.encode(v)
+            v
+          end
+        end
+      end
+    end
