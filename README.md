@@ -12,7 +12,8 @@ We're actively building this library to replace ActiveResource in our Rails 3 ap
 
   * define remote resources via Hyro::Base subclasses
   * pass OAuth2-style tokens via HTTP Authorization header
-  * find remote resources by ID
+  * find remote resources by ID (typically the #show action)
+  * find multiple resources with arbitrary query params (typically the #index action)
   * allow local attribute changes (with dirty-tracking)
   * save (with validations)
   * arbitrary non-REST actions (currently member-only)
@@ -21,7 +22,6 @@ We're actively building this library to replace ActiveResource in our Rails 3 ap
 
 ### What it does NOT do (yet)
 
-  * find multiple resources in one call or support arbitrary queries
   * document or test how the remote service API should work
 
 ## Installation
@@ -103,7 +103,7 @@ Or install it yourself as:
 
 ### Use your class
 
-New & then save:
+#### New & then save:
 
     thing = Thing.new("name" => "Awesometown")
     thing.save!
@@ -112,17 +112,27 @@ Or create with one step:
 
     thing = Thing.create!("name" => "Awesometown")
 
-Find a thing:
+#### Find a collection of things:
+
+    things = Thing.find
+
+...or use querystring params to refine the request:
+
+    things = Thing.find( name: 'MAJ' )
+
+Returns `[]` empty Array when nothing is found.
+
+#### Find a thing:
 
     thing = Thing.find(1)
 
-Call a custom action:
+#### Call a custom action:
 
     thing.action("make_better")
 
 ...or call a custom action with some querystring params:
 
-    thing.action("make_better", :something => 'some value')
+    thing.action("make_better", something: 'some value')
 
 #### Validation errors
 
@@ -217,3 +227,47 @@ And the transform should be declared like:
         end
       end
     end
+
+### URL configurations ###
+
+The following methods may be overridden in your (Hyro::Base sub-)classes to provide specific behavior for your needs. Conventional values shown in paranthesis:
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Setting</th>
+      <th>Example</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>configuration.base_path</td>
+      <td>http://awesome.crowdflower.com</td>
+    </tr>
+    <tr>
+      <td>#url\_for\_find\_by\_id</td>
+      <td>http://awesome.crowdflower.com/things/1</td>
+    </tr>
+    <tr>
+      <td>#url\_for\_find\_by\_query</td>
+      <td>http://awesome.crowdflower.com/things</td>
+    </tr>
+    <tr>
+      <td>#member\_base\_url</td>
+      <td>http://awesome.crowdflower.com/things/1</td>
+    </tr>
+    <tr>
+      <td>#action\_base\_url</td>
+      <td>http://awesome.crowdflower.com/things/1/make_better</td>
+    </tr>
+    <tr>
+      <td>#save\_put\_url</td>
+      <td>http://awesome.crowdflower.com/things/1</td>
+    </tr>
+    <tr>
+      <td>#save\_post\_url</td>
+      <td>http://awesome.crowdflower.com/things</td>
+    </tr>
+  </tbody>
+</table>
+
