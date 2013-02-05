@@ -245,29 +245,32 @@ The following methods may be overridden in your (Hyro::Base sub-)classes to prov
       <td>http://awesome.crowdflower.com</td>
     </tr>
     <tr>
-      <td>#url\_for\_find\_by\_id</td>
+      <td>#url_for_find_by_id</td>
       <td>http://awesome.crowdflower.com/things/1</td>
     </tr>
     <tr>
-      <td>#url\_for\_find\_by\_query</td>
+      <td>#url_for_find_by_query</td>
       <td>http://awesome.crowdflower.com/things</td>
     </tr>
     <tr>
-      <td>#member\_base\_url</td>
+      <td>#member_base_url</td>
       <td>http://awesome.crowdflower.com/things/1</td>
     </tr>
     <tr>
-      <td>#action\_base\_url</td>
+      <td>#action_base_url</td>
       <td>http://awesome.crowdflower.com/things/1/make_better</td>
     </tr>
     <tr>
-      <td>#save\_put\_url</td>
+      <td>#save_put_url</td>
       <td>http://awesome.crowdflower.com/things/1</td>
     </tr>
     <tr>
-      <td>#save\_post\_url</td>
+      <td>#save_post_url</td>
       <td>http://awesome.crowdflower.com/things</td>
     </tr>
   </tbody>
 </table>
+
+**Do not override #to_param and use it for URL config.**
+
 
