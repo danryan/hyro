@@ -49,19 +49,42 @@ module Hyro
     #
     # Performs sanity checks & transformations.
     #
-    def self.existing_from_remote(attrs=nil)
+    def self.existing_from_remote(attrs=nil, options=nil)
       inst = new
-      inst.load_attributes_from_remote(attrs)
+      inst.load_attributes_from_remote(attrs, options)
       inst.instance_variable_set(:@is_persisted, true)
       inst
     end
     
+    # Instantiate collection of objects, such as from an index listing or search query
+    #
+    # Performs sanity checks & transformations.
+    #
+    def self.existing_collection_from_remote(collection=nil, options=nil)
+      return [] unless collection
+      options = {} unless Hash===options
+
+      if configuration.include_root || options[:include_root]
+        # need to fetch a key here
+        return [] unless collection.respond_to?(:[])
+
+        collection = collection[configuration.root_name_plural]
+      end
+      # need an enumerable here
+      return [] unless collection.respond_to?(:map)
+
+      # expect an array of root-less objects
+      collection.map do |e|
+        existing_from_remote(e, options.merge( :include_root => false ))
+      end
+    end
+
     # Populate the instance with attributes returned from the remote service.
     #
     # Performs sanity checks & transformations.
     #
-    def load_attributes_from_remote(attrs=nil)
-      load_attributes(attributes_from_remote(attrs))
+    def load_attributes_from_remote(attrs=nil, options=nil)
+      load_attributes(attributes_from_remote(attrs, options))
     end
     
     # Hash of the instance's attributes. DO NOT ACCESS THESE DIRECTLY.
@@ -90,7 +113,7 @@ module Hyro
     #
     def attributes_to_remote(options=nil)
       options = {} unless Hash===options
-      if options[:include_root] || configuration.include_root
+      if options[:include_root].nil? ? configuration.include_root : options[:include_root]
         {configuration.root_name => encoded_attributes}
       else
         encoded_attributes
@@ -117,7 +140,7 @@ module Hyro
       return unless attrs
       assert_valid_response!(attrs)
       options = {} unless Hash===options
-      if options[:include_root] || configuration.include_root
+      if options[:include_root].nil? ? configuration.include_root : options[:include_root]
         decoded_attributes(attrs[configuration.root_name])
       else
         decoded_attributes(attrs)
