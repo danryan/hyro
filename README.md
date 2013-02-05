@@ -230,7 +230,7 @@ And the transform should be declared like:
 
 ### URL configurations ###
 
-The following methods may be overridden in your (Hyro::Base sub-)classes to provide specific behavior for your needs. Conventional values shown in paranthesis:
+The following methods may be overridden in your (Hyro::Base sub-)classes to provide specific resource locators for your needs:
 
 <table class="table">
   <thead>
