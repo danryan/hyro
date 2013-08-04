@@ -21,5 +21,5 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'debugger'
   gem.add_dependency "faraday", '~> 0.8'
   gem.add_dependency "faraday_middleware", '~> 0.8'
-  gem.add_dependency "activemodel", '~> 3.2'
+  gem.add_dependency "activemodel", '>= 3.2'
 end
